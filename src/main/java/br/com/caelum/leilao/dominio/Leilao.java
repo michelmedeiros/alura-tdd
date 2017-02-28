@@ -1,9 +1,14 @@
 package br.com.caelum.leilao.dominio;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Data
+@NoArgsConstructor
 public class Leilao {
 
 	private String descricao;
@@ -16,10 +21,6 @@ public class Leilao {
 	
 	public void propoe(Lance lance) {
 		lances.add(lance);
-	}
-
-	public String getDescricao() {
-		return descricao;
 	}
 
 	public List<Lance> getLances() {

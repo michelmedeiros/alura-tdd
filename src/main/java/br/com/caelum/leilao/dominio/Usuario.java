@@ -1,5 +1,14 @@
 package br.com.caelum.leilao.dominio;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Usuario {
 
 	private int id;
@@ -9,19 +18,4 @@ public class Usuario {
 		this(0, nome);
 	}
 
-	public Usuario(int id, String nome) {
-		this.id = id;
-		this.nome = nome;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-	
-	
-	
 }
