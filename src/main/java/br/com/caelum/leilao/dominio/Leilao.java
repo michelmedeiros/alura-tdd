@@ -23,10 +23,4 @@ public class Leilao {
 		lances.add(lance);
 	}
 
-	public List<Lance> getLances() {
-		return Collections.unmodifiableList(lances);
-	}
-
-	
-	
 }
