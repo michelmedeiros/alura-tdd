@@ -1,21 +1,22 @@
 package br.com.caelum.leilao.dominio;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.Comparator;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode
 public class Usuario {
 
-	private int id;
+	private Integer id;
 	private String nome;
 	
 	public Usuario(String nome) {
 		this(0, nome);
 	}
+
 
 }

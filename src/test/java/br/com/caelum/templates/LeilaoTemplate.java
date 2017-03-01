@@ -18,6 +18,12 @@ public class LeilaoTemplate implements TemplateLoader {
     @Override
     public void load() {
 
+
+        Fixture.of(Leilao.class).addTemplate("leilão com um lance", new Rule() {{
+            add("descricao", "Mac Book Pro 15");
+            add("lances", has(1).of(Lance.class, "lance válido"));
+        }});
+
         Fixture.of(Leilao.class).addTemplate("leilão com lances crescentes", new Rule() {{
             add("descricao", "X-BOX");
             add("lances", getLancesCrescentes());
