@@ -3,7 +3,6 @@ package br.com.caelum.leilao.servico;
 import br.com.caelum.leilao.dominio.Lance;
 import br.com.caelum.leilao.dominio.Leilao;
 import br.com.caelum.leilao.dominio.Usuario;
-import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
@@ -17,11 +16,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
-import static br.com.six2six.fixturefactory.Fixture.*;
+import static br.com.six2six.fixturefactory.Fixture.from;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -31,33 +28,38 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 public class AvaliadorTest {
 
+    private Avaliador leiloeiro;
+
+    @Before
+    public void before() {
+        leiloeiro = new Avaliador();
+    }
+
     @BeforeClass
     public static void setUp() {
         FixtureFactoryLoader.loadTemplates("br.com.caelum.templates");
     }
 
-//    @Rule
-//    public ExpectedException exception = ExpectedException.none();
-//
-//    @Test
-//    public void naoDeveValidarLeilaoSemLances() throws Exception{
-//        exception.expect(Exception.class);
-//        exception.expectMessage("Um leilão deve possuir pelo menos um lance");
-//        Leilao leilao = new Leilao("Leilão sem lances");
-//        Avaliador leiloeiro = new Avaliador();
-//        leiloeiro.maiorLance(leilao);
-//    }
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
+    @Test
+    public void naoDeveValidarLeilaoSemLances() throws Exception{
+        exception.expect(Exception.class);
+        exception.expectMessage("Um leilão deve possuir pelo menos um lance");
+        Leilao leilao = new Leilao("Leilão sem lances");
+        leiloeiro.maiorLance(leilao);
+    }
 
     @Test
     public void deveValidarApenasTresMaioresLances() throws Exception{
         Leilao leilao = from(Leilao.class).gimme("leilão com lances crescentes");
-        Avaliador avaliador = new Avaliador();
-        List<Lance> lances = avaliador.maioresLances(3L, leilao);
+        List<Lance> lances = leiloeiro.maioresLances(3L, leilao);
         assertEquals(lances.size(), 3);
-        assertThat(lances, hasItem(hasProperty("valor", equalTo(5001D))));
-        assertThat(lances, hasItem(hasProperty("valor", equalTo(5000D))));
-        assertThat(lances, hasItem(hasProperty("valor", equalTo(1000D))));
+        assertThat(lances, hasItems(
+                new Lance(Usuario.builder().id(3).nome("Pedro").build(), 1000D),
+                new Lance(Usuario.builder().id(4).nome("João").build(), 5000D),
+                new Lance(Usuario.builder().id(5).nome("Jorge").build(), 5001D)));
     }
 
 
@@ -65,7 +67,7 @@ public class AvaliadorTest {
     public void deveValidarLancesRandomicos() throws Exception {
 
         Leilao leilao = from(Leilao.class).gimme("leilão com lances randômicos");
-        Avaliador leiloeiro = new Avaliador();
+
         Double maiorLance = leiloeiro.maiorLance(leilao);
         Double menorLance = leiloeiro.menorLance(leilao);
 
@@ -82,7 +84,6 @@ public class AvaliadorTest {
     @Test
     public void deveValidarLancesEmOrdemCrescente() throws Exception {
         Leilao leilao = from(Leilao.class).gimme("leilão com lances crescentes");
-        Avaliador leiloeiro = new Avaliador();
         Double maiorLance = leiloeiro.maiorLance(leilao);
         Double menorLance = leiloeiro.menorLance(leilao);
         Double lanceMedio = leiloeiro.lanceMedio(leilao);
@@ -96,7 +97,7 @@ public class AvaliadorTest {
         assertEquals(medioEsperado, lanceMedio);
         log.info("Maior Lance {} ", maiorLance);
         log.info("Menor Lance {} ", menorLance);
-        log.info("Lance Médio {} ", menorLance);
+        log.info("Lance Médio {} ", lanceMedio);
     }
 
 }

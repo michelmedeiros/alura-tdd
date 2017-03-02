@@ -4,7 +4,9 @@ import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -15,7 +17,6 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
 
 /**
  * Created by Michel Medeiros on 01/03/2017.
@@ -24,13 +25,21 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 public class LeilaoTest {
 
-
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @BeforeClass
     public static void setUp() {
         FixtureFactoryLoader.loadTemplates("br.com.caelum.templates");
     }
 
+    @Test
+    public void naoDeveCriarLeilaoComLanceZeradoOuNegativo() throws Exception{
+        exception.expect(Exception.class);
+        exception.expectMessage("Não pode ser realizado lance zerado ou negativo.");
+        Leilao leilao = new Leilao("Leilão sem lances");
+        leilao.propoe(new Lance(Usuario.builder().nome("ana").build(), -100D));
+    }
 
     @Test
     public void deveReceberUmLance() {
@@ -48,7 +57,31 @@ public class LeilaoTest {
     }
 
     @Test
-    public void naoDevePermitirLancesSimultaneosParaMesmaPessoa() {
+    public void permiteDobrarLanceUsuario() throws Exception {
+        Leilao leilao = new Leilao("Novo IPad");
+        leilao.propoe(new Lance(new Usuario("ana"), 1000D));
+        leilao.propoe(new Lance(new Usuario("pedro"), 500D));
+        leilao.propoe(new Lance(new Usuario("ana"), 1500D));
+        leilao.propoe(new Lance(new Usuario("pedro"), 1200D));
+        leilao.dobrarLance(new Usuario("ana"));
+        assertThat(leilao.getLances().size(), is(5));
+        assertThat(leilao.getLances(), hasItem(hasProperty("valor", equalTo(3000D))));
+    }
+
+    @Test
+    public void naoDeveDobrarLanceUsuarioComApenasUmUnicoLance() throws Exception {
+        Leilao leilao = new Leilao("Novo IPad");
+        leilao.propoe(new Lance(new Usuario("ana"), 1000D));
+        leilao.propoe(new Lance(new Usuario("pedro"), 500D));
+        leilao.dobrarLance(new Usuario("ana"));
+        assertThat(leilao.getLances().size(), is(2));
+        assertThat(leilao.getLances(), hasItem(hasProperty("valor", equalTo(1000D))));
+    }
+
+    @Test
+    public void naoDevePermitirLancesSimultaneosParaMesmaPessoa() throws Exception {
+        exception.expect(Exception.class);
+        exception.expectMessage("Não pode ser realizado dois lances consecutivos para o mesmo usuário.");
         Leilao leilao = new Leilao("Mac Book Pro");
         leilao.propoe(new Lance(new Usuario("ana"), 1000D));
         leilao.propoe(new Lance(new Usuario("ana"), 2000D));
@@ -58,7 +91,9 @@ public class LeilaoTest {
     }
 
     @Test
-    public void naoDevePermitir5LancesParaMesmaPessoa() {
+    public void naoDevePermitir5LancesParaMesmaPessoa() throws Exception {
+        exception.expect(Exception.class);
+    exception.expectMessage("Não pode ser realizado mais de 5 lances por usuário.");
         Leilao leilao = new Leilao("Mac Book Pro");
         leilao.propoe(new Lance(new Usuario("ana"), 1000D));
         leilao.propoe(new Lance(new Usuario("pedro"), 1000D));
