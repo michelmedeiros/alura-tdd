@@ -2,8 +2,6 @@ package br.com.caelum.leilao.dominio;
 
 import lombok.*;
 
-import java.util.Comparator;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

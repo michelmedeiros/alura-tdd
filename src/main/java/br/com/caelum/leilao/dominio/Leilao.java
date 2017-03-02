@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -19,7 +18,7 @@ public class Leilao {
 	
 	public Leilao(String descricao) {
 		this.descricao = descricao;
-		this.lances = new ArrayList<Lance>();
+		this.lances = new ArrayList<>();
 	}
 	
 	public void propoe(Lance lance) throws Exception {

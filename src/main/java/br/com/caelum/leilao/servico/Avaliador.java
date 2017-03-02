@@ -8,8 +8,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by miche on 28/02/2017.
+ * Created by Michel Medeiros on 28/02/2017.
  */
+@SuppressWarnings("DefaultFileTemplate")
 public class Avaliador {
 
     public Double maiorLance(Leilao leilao) throws Exception {

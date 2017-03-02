@@ -1,9 +1,14 @@
 package br.com.caelum.leilao.servico;
 
+/**
+ * Created by Michel Medeiros on 28/02/2017.
+ */
+
 import br.com.caelum.leilao.dominio.Lance;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
+
 
 public class FiltroLances {
 
